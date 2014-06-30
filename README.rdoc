@@ -1,28 +1,39 @@
-== README
+Example Usage
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Created a new rails application called blog.
 
-Things you may want to cover:
+rails new blog
+Edit your Gemfile and add
 
-* Ruby version
+gem 'rails-backbone'
+Install the gem and generate scaffolding.
 
-* System dependencies
+bundle install
+rails g backbone:install
+rails g scaffold Post title:string content:string
+rake db:migrate
+rails g backbone:scaffold Post title:string content:string
+You now have installed the backbone-rails gem, setup a default directory structure for your frontend backbone code. Then you generated the usual rails server side crud scaffolding and finally generated backbone.js code to provide a simple single page crud app. You have one last step:
 
-* Configuration
+Edit your posts index view app/views/posts/index.html.erb with the following contents:
 
-* Database creation
+<div id="posts"></div>
 
-* Database initialization
+<script type="text/javascript">
+  $(function() {
+    // Blog is the app name
+    window.router = new Blog.Routers.PostsRouter({posts: <%= @posts.to_json.html_safe -%>});
+    Backbone.history.start();
+  });
+</script>
+If you prefer haml, this is equivalent to inserting the following code into app/views/posts/index.html.haml:
 
-* How to run the test suite
+#posts
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+:javascript
+  $(function() {
+    // Blog is the app name
+    window.router = new Blog.Routers.PostsRouter({posts: #{@posts.to_json.html_safe}});
+    Backbone.history.start();
+  });
+Now start your server rails s and browse to localhost:3000/posts You should now have a fully functioning single page crud app for Post models.
